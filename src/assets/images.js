@@ -1,0 +1,22 @@
+import b1_s from './b1_s.jpg'
+import b1_m from './b1_m.jpg'
+import b1_l from './b1_l.jpg'
+import b2_s from './b2_s.jpg'
+import b2_m from './b2_m.jpg'
+import b2_l from './b2_l.jpg'
+import b3_s from './b3_s.jpg'
+import b3_m from './b3_m.jpg'
+import b3_l from './b3_l.jpg'
+import b4_s from './b4_s.jpg'
+import b4_m from './b4_m.jpg'
+import b4_l from './b4_l.jpg'
+import b5_s from './b5_s.jpg'
+import b5_m from './b5_m.jpg'
+import b5_l from './b5_l.jpg'
+import b6_s from './b6_s.jpg'
+import b6_m from './b6_m.jpg'
+import b6_l from './b6_l.jpg'
+import user from './user.png'
+
+export {b1_s, b1_m, b1_l, b2_s, b2_m, b2_l, b3_s, b3_m, b3_l, b4_s, b4_m, b4_l, b5_s, b5_m, b5_l, b6_s, b6_m, b6_l};
+export {user};
