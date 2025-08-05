@@ -3,7 +3,6 @@ import RecommendedSegment from '@/components/RecommendedSegment';
 import RecommendedCardSkeleton from '@/components/RecommendedCardSkeleton';
 import { Button } from '@/components/ui/button';
 import books from '@/assets/details';
-import sleep from '@/utils/sleepFunction';
 
 const RecommendationPage = () => {
   const [popular, setPopular] = useState([]);

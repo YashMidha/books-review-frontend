@@ -18,5 +18,4 @@ import b6_m from './b6_m.jpg'
 import b6_l from './b6_l.jpg'
 import user from './user.png'
 
-export {b1_s, b1_m, b1_l, b2_s, b2_m, b2_l, b3_s, b3_m, b3_l, b4_s, b4_m, b4_l, b5_s, b5_m, b5_l, b6_s, b6_m, b6_l};
-export {user};
+export {b1_s, b1_m, b1_l, b2_s, b2_m, b2_l, b3_s, b3_m, b3_l, b4_s, b4_m, b4_l, b5_s, b5_m, b5_l, b6_s, b6_m, b6_l, user};
