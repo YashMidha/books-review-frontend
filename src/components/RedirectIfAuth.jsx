@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/context/authContext.jsx";
+import { useAuth } from "@/context/AuthContext.jsx";
 
 export default function RedirectIfAuth({ children }){
     const { user } = useAuth();
