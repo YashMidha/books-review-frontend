@@ -8,7 +8,7 @@ import { Loader2, Camera } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import { signupService } from "@/services/authService";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext.jsx";
 
 export default function SignupPage() {
     const [formData, setFormData] = useState({

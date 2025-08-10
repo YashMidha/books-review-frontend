@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from './ui/textarea';
-import { Loader2 } from 'lucide-react'; // Spinner icon from Lucide
+import { Loader2 } from 'lucide-react'; 
 import { enhanceReview } from '@/services/userService';
 
 const RefineAIModel = ({title, prevReview, setPrevReview }) => {

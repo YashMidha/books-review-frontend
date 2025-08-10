@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { loginService } from "@/services/authService";
-import { useAuth } from "@/context/authContext";
+import { useAuth } from "@/context/authContext.jsx";
 
 export default function LoginPage() {
     const navigate = useNavigate();

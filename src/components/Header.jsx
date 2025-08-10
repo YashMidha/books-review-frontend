@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDown, LogIn, LogOut, Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/authContext";
+import { useAuth } from "@/context/authContext.jsx";
 
 export default function Header() {
   const { user, logout } = useAuth();
