@@ -13,18 +13,17 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from './ui/textarea';
 import { Loader2 } from 'lucide-react'; // Spinner icon from Lucide
+import { enhanceReview } from '@/services/userService';
 
-const RefineAIModel = ({ prevReview, setPrevReview }) => {
+const RefineAIModel = ({title, prevReview, setPrevReview }) => {
   const [review, setReview] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Simulate API call
   const refineReviewWithAI = async (rawText) => {
     setLoading(true);
     try {
-      // Replace this with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      return rawText + " (Refined)";
+      const data = await enhanceReview({review: rawText, bookTitle: title});
+      return data.enhancedReview;
     } catch (err) {
       console.error("AI refinement failed", err);
       return rawText;
@@ -86,7 +85,7 @@ const RefineAIModel = ({ prevReview, setPrevReview }) => {
           <DialogClose asChild>
             <Button
               onClick={() => setPrevReview(review.trim())}
-              disabled={loading || review.trim() === prevReview.trim()}
+              disabled={loading || review?.trim() === prevReview?.trim()}
             >
               Apply changes
             </Button>

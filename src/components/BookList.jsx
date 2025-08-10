@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Star } from 'lucide-react';
+import { Minus, Pencil, Star } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -17,6 +17,8 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import clsx from 'clsx';
+import SafeImage from './SafeImage';
+import { useNavigate } from 'react-router-dom';
 
 const listColorMap = {
   reading: 'border-l-4 border-green-500',
@@ -26,13 +28,17 @@ const listColorMap = {
 };
 
 const BookList = ({ books = [], listType }) => {
-  const [sortBy, setSortBy] = useState('date');
+
+  const navigate = useNavigate();
+
+  const [sortBy, setSortBy] = useState('title');
 
   const sortedBooks = useMemo(() => {
     return [...books].sort((a, b) => {
       if (sortBy === 'title') return a.title.localeCompare(b.title);
       if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
-      if (sortBy === 'date') return new Date(b.date || 0) - new Date(a.date || 0);
+      if (sortBy === 'avgRating') return (b.avgRating || 0) - (a.avgRating || 0);
+      if (sortBy === 'totalRatings') return (b.totalRatings || 0) - (a.totalRatings || 0);
       return 0;
     });
   }, [books, sortBy]);
@@ -41,6 +47,10 @@ const BookList = ({ books = [], listType }) => {
     const type = listType === 'all' ? book.sourceList : listType;
     return listColorMap[type] || '';
   };
+
+  useEffect(()=>{
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [])
 
   return (
     <div className="p-4 space-y-4 w-full">
@@ -51,9 +61,10 @@ const BookList = ({ books = [], listType }) => {
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="date">Date</SelectItem>
             <SelectItem value="title">Title</SelectItem>
-            <SelectItem value="rating">Rating</SelectItem>
+            <SelectItem value="rating">My Rating</SelectItem>
+            <SelectItem value="avgRating">Average Rating</SelectItem>
+            <SelectItem value="totalRatings">Total Ratings</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -73,18 +84,18 @@ const BookList = ({ books = [], listType }) => {
           </TableHeader>
           <TableBody>
             {sortedBooks.map((book, index) => (
-              <TableRow key={`${book.id}-${index}`}>
+              <TableRow key={`${book._id}-${index}`}>
                 <TableCell className={getColorClass(book)} />
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
-                  <img src={book.cover} alt={book.title} className="w-12 h-16 object-cover rounded" />
+                  <SafeImage onClick={() => {navigate(`/book/${book.isbn}`)}} srcList={[book.imageLinks.medium, book.imageLinks.thumbnail].filter(Boolean)} alt={book.title} className="w-14 h-20 object-cover rounded cursor-pointer" />
                 </TableCell>
                 <TableCell>
-                  <div className="font-medium">{book.title}</div>
-                  <div className="text-sm text-muted-foreground">{book.author}</div>
+                  <div onClick={()=>navigate(`/book/${book.isbn}`)} className="font-medium cursor-pointer">{book.title}</div>
+                  <div className="text-sm text-muted-foreground">{book.authors}</div>
                 </TableCell>
                 <TableCell>
-                  {book.progress ? `${book.progress}/${book.totalPages}` : book.totalPages}
+                  {book.pagesRead ?  book.pagesRead : 0}
                 </TableCell>
                 <TableCell>
                   {book.rating ? (
@@ -92,13 +103,20 @@ const BookList = ({ books = [], listType }) => {
                       <Star className="h-4 w-4 fill-yellow-500" /> {book.rating}
                     </span>
                   ) : (
-                    <span className="italic text-muted-foreground text-sm">No rating</span>
+                    <span className="italic text-muted-foreground text-sm"><Minus className='w-3 h-3 text-black' /></span>
                   )}
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button variant="outline" size="sm">
-                    Update
+                  <Button
+                    size="icon"
+                    onClick={() => navigate(`/book/${book.isbn}/add`)}
+                    className='bg-green-500 hover:bg-green-600 text-white'
+                  >
+                    <Pencil className="w-4 h-4" />
                   </Button>
+                  {/* <Button onClick={()=>navigate(`/book/${book.isbn}/add`)} variant="outline" size="sm">
+                    Update
+                  </Button> */}
                 </TableCell>
               </TableRow>
             ))}
@@ -111,22 +129,21 @@ const BookList = ({ books = [], listType }) => {
           const colorBar = getColorClass(book);
           return (
             <div
-              key={`${book.id}-${index}`}
+              key={`${book._id}-${index}`}
               className={clsx(
                 'flex items-start gap-3 border rounded-md p-4 relative shadow-sm',
                 colorBar
               )}
             >
               <span className="absolute left-0 top-0 h-full w-1 rounded-l-md" />
-              <img src={book.cover} alt={book.title} className="w-16 h-24 object-cover rounded" />
+              <SafeImage onClick={() => {navigate(`/book/${book.isbn}`)}}  srcList={[book.imageLinks.medium, book.imageLinks.thumbnail].filter(Boolean)} alt={book.title} className="w-16 h-24 object-cover rounded" />
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-base">{book.title}</h3>
                   <span className="text-muted-foreground text-sm">#{index + 1}</span>
                 </div>
-                <p className="text-sm text-muted-foreground">{book.author}</p>
                 <p className="text-sm mt-1">
-                  {book.progress ? `${book.progress}/${book.totalPages} pages` : `${book.totalPages} pages`}
+                  {book.pagesRead ?  book.pagesRead : 0}
                 </p>
                 <div className="flex justify-between items-center mt-2">
                   {book.rating ? (
@@ -135,10 +152,17 @@ const BookList = ({ books = [], listType }) => {
                       {book.rating}
                     </span>
                   ) : (
-                    <span className="italic text-muted-foreground text-sm">No rating</span>
+                    <span className="italic text-muted-foreground text-sm"><Minus className='w-3 h-3 text-black' /></span>
                   )}
-                  <Button variant="outline" size="sm">
+                  {/* <Button onClick={()=>navigate(`/book/${book.isbn}/add`)} variant="outline" size="sm">
                     Update
+                  </Button> */}
+                  <Button
+                    size="icon"
+                    onClick={() => navigate(`/book/${book.isbn}/add`)}
+                    className='bg-green-500 hover:bg-green-600 text-white'
+                  >
+                    <Pencil className="w-4 h-4" />
                   </Button>
                 </div>
               </div>

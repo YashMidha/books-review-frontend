@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import staticBooks from '@/assets/details'
 import SearchCard from '@/components/SearchCard'
 import SearchCardSkeleton from '@/components/SearchCardSkeleton';
 import { Search } from 'lucide-react';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import Pagination from '@mui/material/Pagination';
+import { getSearchResult } from '@/services/bookService';
 
 
 const SearchPage = () => {
@@ -18,35 +11,42 @@ const SearchPage = () => {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [books, setBooks] = useState([]);
-  const [limit, setLimit] = useState(9);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [msg, setMsg] = useState("");
+
+  const fetchBooks = async (page=1) => {
+    try{
+      setLoading(true);
+      const data = await getSearchResult(searchQuery, null, page);
+      setBooks(data.books || []);
+      setTotalPages(data.totalPages || 0);
+      setMsg(data.message || "");
+    } catch(err){
+      console.error(err);
+      setBooks(0);
+      setTotalPages(0);
+    } finally{
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  }
+    setCurrentPage(1);
+    fetchBooks(1);
+  };
 
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      setLoading(true);
-
+  const handlePageChange = (event, value) => {
+    if (value >= 1 && value <= totalPages) {
+      setCurrentPage(value);
+      fetchBooks(value);
       window.scrollTo({ top: 0, behavior: 'smooth' }); 
-
-      setTimeout(() => {
-        setBooks(staticBooks.slice((page - 1) * limit, page * limit)); 
-        setLoading(false);
-      }, 500);
     }
   };
 
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setTotalPages(Math.ceil(staticBooks.length/limit));
-      setBooks(staticBooks.slice(0, limit));
-      setLoading(false);
-    }, 500);
+    fetchBooks(currentPage);
   }, []);
 
   return (
@@ -72,7 +72,12 @@ const SearchPage = () => {
         </form>
       </div>
 
-      
+      {msg && !loading && books.length > 0 && (
+        <p className="text-center text-gray-600 italic mb-6">
+          {msg}
+        </p>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {loading ? (
           Array.from({ length: 6 }).map((_, id) => <SearchCardSkeleton key={id} />)
@@ -87,40 +92,7 @@ const SearchPage = () => {
 
       {totalPages > 1 && (
         <div className="flex justify-center mt-8">
-          <Pagination>
-            <PaginationContent>
-
-              <PaginationItem>
-                <PaginationPrevious
-                  className={`cursor-pointer ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
-                  onClick={() => handlePageChange(currentPage - 1)}
-                />
-              </PaginationItem>
-
-              {Array.from({ length: totalPages }).map((_, i) => {
-                const pageNum = i + 1;
-                return (
-                  <PaginationItem key={pageNum}>
-                    <PaginationLink
-                      isActive={pageNum === currentPage}
-                      onClick={() => handlePageChange(pageNum)}
-                      className="cursor-pointer"
-                    >
-                      {pageNum}
-                    </PaginationLink>
-                  </PaginationItem>
-                );
-              })}
-
-              <PaginationItem>
-                <PaginationNext
-                  className={`cursor-pointer ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
-                  onClick={() => handlePageChange(currentPage + 1)}
-                />
-              </PaginationItem>
-
-            </PaginationContent>
-          </Pagination>
+          <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} />
         </div>
       )}
 

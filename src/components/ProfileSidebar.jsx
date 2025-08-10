@@ -27,18 +27,21 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Link } from 'react-router-dom'
-import userData from '@/assets/user';
+import { useAuth } from '@/context/authContext'
 
 const ProfileSidebar = () => {
+
+  const {user} = useAuth();
+
   return (
     <Sidebar className="h-screen w-64 border-r shadow-sm">
       <SidebarContent>
-        {/* Avatar and Username */}
-        <div className="flex items-center gap-3 px-4 py-6 border-b text-xl">
-          <img src={userData.avatar} alt="avatar" className="w-10 h-10 rounded-full" />
+        
+        <div className="flex items-center gap-3 px-4 py-6 border-b md:border-b-0 text-xl">
+          <img src={user.profileImg} alt="avatar" className="w-10 h-10 rounded-full" />
           <div>
-            <p className="font-medium text-base">{userData.name}</p>
-            <p className="text-sm text-muted-foreground">{userData.email}</p>
+            <p className="font-medium text-base">{user.name}</p>
+            <p className="text-sm text-muted-foreground">{user.email}</p>
           </div>
         </div>
 
@@ -48,7 +51,7 @@ const ProfileSidebar = () => {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {/* Dashboard */}
+              
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link to="/profile" className="flex items-center gap-3 px-3 py-2 text-base font-normal">
@@ -58,7 +61,6 @@ const ProfileSidebar = () => {
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
-              {/* Collapsible My List Section */}
               <Collapsible defaultOpen className="group/collapsible">
                 <SidebarGroupLabel asChild>
                     <CollapsibleTrigger className="flex items-center gap-3 px-3 py-2 text-base font-normal cursor-pointer">
@@ -107,7 +109,6 @@ const ProfileSidebar = () => {
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* My Reviews */}
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link to="/profile/reviews" className="flex items-center gap-3 px-3 py-2 text-base font-normal">
@@ -117,7 +118,6 @@ const ProfileSidebar = () => {
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
-              {/* Settings */}
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link to="/profile/settings" className="flex items-center gap-3 px-3 py-2 text-base font-normal">
@@ -131,7 +131,6 @@ const ProfileSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Footer */}
       <div className="mt-auto flex items-center gap-2 px-4 py-3 text-sm text-muted-foreground">
         <Copyright className="h-4 w-4" />
         <span>Yash Midha</span>

@@ -8,7 +8,7 @@ const Profile = () => {
         <div>
             <SidebarProvider>
                 <ProfileSidebar />
-                <main>
+                <main className='w-full'>
                     <SidebarTrigger />
                     <Outlet />
                 </main>

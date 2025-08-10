@@ -3,36 +3,49 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import books from '@/assets/details';
 import RecommendationSegment from '@/components/RecommendationSegment';
 import RecommendationSegmentSkeleton from '@/components/RecommendationSegmentSkeleton';
+import { getUserRecommendations } from '@/services/userService';
+import ErrorComponent from '@/components/ErrorComponent';
 
 const RecommendationPage2 = () => {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  const [error, setError] = useState(null);
 
   const fetchData = async () => {
-    const fetchedData = {
-      bookTitle: books[Math.floor(Math.random() * books.length)].bookTitle,
-      books: books
-    };
-
-    setTimeout(() => {
+    try {
+      const data = await getUserRecommendations(currentPage);
       setCurrentPage(prev => prev + 1);
-      setItems(prevItems => [...prevItems, fetchedData]);
-    }, 1000);
+      setItems(prevItems => [
+        ...prevItems,
+        ...data.personalizedRecommendations
+      ]);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  useEffect(() => {
-    setTotalPages(3);
-    setCurrentPage(1);
-    const fetchedData = {
-      bookTitle: books[Math.floor(Math.random() * books.length)].bookTitle,
-      books: books
+   useEffect(() => {
+    const fetchFirstPage = async () => {
+      try {
+        const firstPage = await getUserRecommendations(1);
+        setTotalPages(firstPage.totalPages);
+        setItems(firstPage.personalizedRecommendations)
+        setCurrentPage(2);
+      } catch (err) {
+        console.error(err);
+        setError("Error loading initial recommendations");
+      }
     };
-    setItems(prevItems => [...prevItems, fetchedData]);
+    fetchFirstPage();
   }, []);
 
+  if (error){
+    return <ErrorComponent error={error} />
+  }
+
   return (
-    <div className="max-w-screen-xl mx-auto px-4 py-8">
+    <div className="max-w-screen-lg mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-center text-primary">Recommended For You</h1>
 
       <InfiniteScroll
@@ -42,7 +55,7 @@ const RecommendationPage2 = () => {
         loader={<RecommendationSegmentSkeleton />}
         endMessage={
           <p className="text-center text-sm text-gray-500 py-4">
-            <b>Yay! You have seen it all</b>
+            <b>Add more books to get more recommendations</b>
           </p>
         }
       >
@@ -50,8 +63,8 @@ const RecommendationPage2 = () => {
           {items.map((item, idx) => (
             <RecommendationSegment
               key={idx}
-              title={`Since you read ${item.bookTitle}`}
-              booksData={item.books}
+              title={`Since you read ${item.title}`}
+              booksData={item.recommendations}
             />
           ))}
         </div>
