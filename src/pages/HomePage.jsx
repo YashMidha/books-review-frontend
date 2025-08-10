@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import BlurText from '@/components/BlurText';
-import { useAuth } from '@/context/authContext.jsx';
+import { useAuth } from '@/context/AuthContext.jsx';
 
 const HomePage = () => {
   const { user } = useAuth();

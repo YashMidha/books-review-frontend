@@ -27,7 +27,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { Link } from 'react-router-dom'
-import { useAuth } from '@/context/authContext.jsx'
+import { useAuth } from '@/context/AuthContext.jsx'
 
 const ProfileSidebar = () => {
 
